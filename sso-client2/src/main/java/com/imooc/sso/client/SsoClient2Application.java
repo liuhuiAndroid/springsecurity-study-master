@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @SpringBootApplication
 @RestController
+// @EnableOAuth2Sso 会帮我们完成跳转到授权服务器，需要配置 application.properties
 @EnableOAuth2Sso
 public class SsoClient2Application {
 	

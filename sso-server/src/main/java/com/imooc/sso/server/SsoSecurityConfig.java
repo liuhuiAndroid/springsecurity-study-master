@@ -24,17 +24,31 @@ public class SsoSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	private UserDetailsService userDetailsService;
-	
+
+	/**
+	 * 加密器
+	 * @return
+	 */
 	@Bean
 	public PasswordEncoder passwordEncoder()	{
 		return new BCryptPasswordEncoder();
 	}
-	
+
+	/**
+	 * 使用自己的userDetailsService和加密器来进行身份验证
+	 * @param auth
+	 * @throws Exception
+	 */
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
 	}
-	
+
+	/**
+	 * 配置表单登录
+	 * @param http
+	 * @throws Exception
+	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.formLogin().and().authorizeRequests().anyRequest().authenticated();

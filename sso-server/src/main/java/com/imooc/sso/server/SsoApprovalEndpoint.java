@@ -74,5 +74,4 @@ public class SsoApprovalEndpoint {
 	private static String SCOPE = "<li><div class='form-group'>%scope%: <input type='radio' name='%key%'"
 			+ " value='true'%approved%>Approve</input> <input type='radio' name='%key%' value='false'%denied%>Deny</input></div></li>";
 
-
 }

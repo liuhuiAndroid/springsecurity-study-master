@@ -22,12 +22,13 @@ public class SsoUserDetailsService implements UserDetailsService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
-	/* (non-Javadoc)
-	 * @see org.springframework.security.core.userdetails.UserDetailsService#loadUserByUsername(java.lang.String)
+	/**
+	 * 配置加密器和密码
 	 */
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return new User(username, passwordEncoder.encode("123456"), 
+		System.out.println("SsoUserDetailsService#loadUserByUsername");
+		return new User(username, passwordEncoder.encode("123455"),
 				AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
 	}
 
