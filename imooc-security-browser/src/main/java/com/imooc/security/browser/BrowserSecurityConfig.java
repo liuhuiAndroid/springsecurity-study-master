@@ -8,29 +8,32 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 import org.springframework.social.security.SpringSocialConfigurer;
 
-import com.imooc.security.core.authentication.AbstractChannelSecurityConfig;
+import com.imooc.security.core.authentication.FormAuthenticationConfig;
 import com.imooc.security.core.authentication.mobile.SmsCodeAuthenticationSecurityConfig;
-import com.imooc.security.core.properties.SecurityConstants;
+import com.imooc.security.core.authorize.AuthorizeConfigManager;
 import com.imooc.security.core.properties.SecurityProperties;
 import com.imooc.security.core.validate.code.ValidateCodeSecurityConfig;
 
 /**
+ * 浏览器环境下安全配置主类
+ * 
  * @author zhailiang
  *
  */
 @Configuration
-public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
-
+public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
+	
 	@Autowired
 	private SecurityProperties securityProperties;
 	
@@ -55,10 +58,19 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 	@Autowired
 	private InvalidSessionStrategy invalidSessionStrategy;
 	
+	@Autowired
+	private LogoutSuccessHandler logoutSuccessHandler;
+	
+	@Autowired
+	private AuthorizeConfigManager authorizeConfigManager;
+	
+	@Autowired
+	private FormAuthenticationConfig formAuthenticationConfig;
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
-		applyPasswordAuthenticationConfig(http);
+		formAuthenticationConfig.configure(http);
 		
 		http.apply(validateCodeSecurityConfig)
 				.and()
@@ -66,6 +78,7 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 				.and()
 			.apply(imoocSocialSecurityConfig)
 				.and()
+			//记住我配置，如果想在'记住我'登录时记录日志，可以注册一个InteractiveAuthenticationSuccessEvent事件的监听器
 			.rememberMe()
 				.tokenRepository(persistentTokenRepository())
 				.tokenValiditySeconds(securityProperties.getBrowser().getRememberMeSeconds())
@@ -78,29 +91,21 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 				.expiredSessionStrategy(sessionInformationExpiredStrategy)
 				.and()
 				.and()
-			.authorizeRequests()
-				.antMatchers(
-					SecurityConstants.DEFAULT_UNAUTHENTICATION_URL,
-					SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_MOBILE,
-					securityProperties.getBrowser().getLoginPage(),
-					SecurityConstants.DEFAULT_VALIDATE_CODE_URL_PREFIX+"/*",
-					securityProperties.getBrowser().getSignUpUrl(),
-					securityProperties.getBrowser().getSession().getSessionInvalidUrl()+".json",
-					securityProperties.getBrowser().getSession().getSessionInvalidUrl()+".html",
-					"/user/regist")
-					.permitAll()
-				.anyRequest()
-				.authenticated()
+			.logout()
+				.logoutUrl("/signOut")
+				.logoutSuccessHandler(logoutSuccessHandler)
+				.deleteCookies("JSESSIONID")
 				.and()
 			.csrf().disable();
 		
+		authorizeConfigManager.config(http.authorizeRequests());
+		
 	}
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-	
+	/**
+	 * 记住我功能的token存取器配置
+	 * @return
+	 */
 	@Bean
 	public PersistentTokenRepository persistentTokenRepository() {
 		JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();

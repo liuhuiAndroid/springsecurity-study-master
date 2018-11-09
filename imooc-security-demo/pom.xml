@@ -15,6 +15,19 @@
 			<artifactId>imooc-security-browser</artifactId>
 			<version>${imooc.security.version}</version>
 		</dependency>
+		
+		<!-- 
+		<dependency>
+			<groupId>com.imooc.security</groupId>
+			<artifactId>imooc-security-authorize</artifactId>
+			<version>${imooc.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.imooc.security</groupId>
+			<artifactId>imooc-security-app</artifactId>
+			<version>${imooc.security.version}</version>
+		</dependency>
+		 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -40,6 +53,11 @@
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
 			<artifactId>wiremock</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.7.0</version>
 		</dependency>
 	</dependencies>
 

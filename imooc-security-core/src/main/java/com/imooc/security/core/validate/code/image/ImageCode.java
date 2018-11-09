@@ -10,10 +10,16 @@ import com.imooc.security.core.validate.code.ValidateCode;
 
 
 /**
+ * 图片验证码
  * @author zhailiang
  *
  */
 public class ImageCode extends ValidateCode {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6020470039852318468L;
 	
 	private BufferedImage image; 
 	

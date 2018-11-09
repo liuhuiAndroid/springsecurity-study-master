@@ -5,7 +5,7 @@
 	<artifactId>imooc-security</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	
+
 	<properties>
 		<imooc.security.version>1.0.0-SNAPSHOT</imooc.security.version>
 	</properties>
@@ -28,7 +28,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -49,5 +49,6 @@
 		<module>../imooc-security-browser</module>
 		<module>../imooc-security-core</module>
 		<module>../imooc-security-demo</module>
+		<module>../imooc-security-authorize</module>
 	</modules>
 </project>
